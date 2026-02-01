@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💕 Valentine's Day 💕</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.container {
+  text-align: center;
+  background: white;
+  padding: 60px 80px;
+  border-radius: 30px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  max-width: 600px;
+  position: relative;
+}
+
+h1 {
+  color: #e91e63;
+  font-size: 2.5em;
+  margin-bottom: 30px;
+}
+
+.emoji {
+  font-size: 5em;
+  margin-bottom: 20px;
+  animation: heartbeat 1.5s infinite;
+}
+
+@keyframes heartbeat {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.buttons {
+  margin-top: 40px;
+  height: 80px;
+}
+
+button {
+  font-size: 1.3em;
+  padding: 15px 40px;
+  margin: 10px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+#yesBtn {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+#yesBtn:hover {
+  transform: scale(1.1);
+}
+
+#noBtn {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  color: #333;
+  position: fixed;
+}
+
+.success {
+  display: none;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.5); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.success h2 {
+  color: #e91e63;
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+.success .celebration {
+  font-size: 6em;
+  margin-bottom: 20px;
+}
+
+.hearts {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.heart {
+  position: absolute;
+  font-size: 20px;
+  animation: fall linear infinite;
+  opacity: 0.7;
+}
+
+@keyframes fall {
+  0% { top: -10%; opacity: 0.7; }
+  100% { top: 110%; opacity: 0; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="hearts" id="hearts"></div>
+
+<div class="container">
+  <div id="question">
+    <div class="emoji">💝</div>
+    <h1>Will you be my Valentine's date?</h1>
+
+    <div class="buttons">
+      <button id="yesBtn">Yes! 💕</button>
+      <button id="noBtn">No 😢</button>
+    </div>
+  </div>
+
+  <div class="success" id="success">
+    <div class="celebration">🎉💖🎊</div>
+    <h2>Yay! I'm so happy! 😊</h2>
+    <p style="font-size:1.5em;color:#666;margin-top:20px;">
+      Can't wait for our Valentine's date! 💕
+    </p>
+  </div>
+</div>
+
+<script>
+const yesBtn = document.getElementById('yesBtn');
+const noBtn = document.getElementById('noBtn');
+const question = document.getElementById('question');
+const success = document.getElementById('success');
+
+// Falling hearts
+function createHeart() {
+  const heart = document.createElement('div');
+  heart.classList.add('heart');
+  heart.innerHTML = '❤️';
+  heart.style.left = Math.random() * 100 + '%';
+  heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+  document.getElementById('hearts').appendChild(heart);
+  setTimeout(() => heart.remove(), 5000);
+}
+setInterval(createHeart, 300);
+
+// YES button
+yesBtn.addEventListener('click', () => {
+  question.style.display = 'none';
+  success.style.display = 'block';
+  for (let i = 0; i < 50; i++) {
+    setTimeout(createHeart, i * 50);
+  }
+});
+
+// Move NO button (locked inside screen)
+function moveButton() {
+  const btnRect = noBtn.getBoundingClientRect();
+  const padding = 20;
+
+  const maxX = window.innerWidth - btnRect.width - padding;
+  const maxY = window.innerHeight - btnRect.height - padding;
+
+  const x = Math.random() * (maxX - padding) + padding;
+  const y = Math.random() * (maxY - padding) + padding;
+
+  noBtn.style.left = x + 'px';
+  noBtn.style.top = y + 'px';
+}
+
+// Dodge events
+['mouseenter','mouseover','mousedown','touchstart','focus'].forEach(evt => {
+  noBtn.addEventListener(evt, e => {
+    e.preventDefault();
+    moveButton();
+  });
+});
+
+// Mouse proximity dodge
+document.addEventListener('mousemove', e => {
+  const rect = noBtn.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+
+  const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+
+  if (dist < 150) moveButton();
+});
+
+// Initial position
+moveButton();
+</script>
+
+</body>
+</html>
